@@ -1,3 +1,12 @@
+/*
+
+  Eren Keskin 
+  Joystick Kontrollü Araç - Verici Kodları (Transmitter)
+  Ayrıntılar: http://herenkeskin.com/arduino-nrf24l01-ile-joystick-kontrollu-araba
+  17.04.2017
+  
+*/
+
 // Gerekli olan kütüphaneler
 #include <SPI.h>
 #include "nRF24L01.h"
@@ -10,11 +19,6 @@
 RF24 verici(CE_PIN, CSN_PIN);
 
 const byte koleAdrei[6] = {'R', 'x', 'E', 'r', 'e', 'n'};
-
-// Gecikme Tanımlamaları
-unsigned long anlikZaman;
-unsigned long gecmisZaman;
-unsigned long gecikmeSuresi = 1000;   // milisaniye cinsinden
 
 // Joystick Tanımlamaları
 const int joyYatay = 0;   // Analog 0

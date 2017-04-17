@@ -1,3 +1,12 @@
+/*
+
+  Eren Keskin 
+  Joystick Kontrollü Araç - Alıcı Kodları (Receiver)
+  Ayrıntılar: http://herenkeskin.com/arduino-nrf24l01-ile-joystick-kontrollu-araba
+  17.04.2017
+  
+*/
+
 // Gerekli olan kütüphaneler
 #include <SPI.h>
 #include "nRF24L01.h"
@@ -14,6 +23,7 @@ RF24 alici(CE_PIN, CSN_PIN);
 // Veri İslemleri
 int alinanVeriler[10];
 bool alindi = false;
+int sayac, durum = 0;
 
 // Motor Tanımlamaları
 #define motorSol1 A0          // Analog 0
@@ -52,16 +62,40 @@ void loop() {
       }
 
       int x_ekseni = alinanVeriler[0];
-          x_ekseni = map(x_ekseni, 0, 1023, 255, 0);
+      x_ekseni = map(x_ekseni, 0, 1023, 255, 0);
       int y_ekseni = alinanVeriler[1];
-          y_ekseni = map(y_ekseni, 0, 1023, 255, 0);
+      y_ekseni = map(y_ekseni, 0, 1023, 255, 0);
+      int mars = alinanVeriler[7];
 
-      analogWrite(motorSolPWM, x_ekseni);
-      analogWrite(motorSagPWM, y_ekseni);
+      // Eğer 7 numaralı pine basildiysa aracı çalıştır
+      if (mars != durum) {
+        if (mars == HIGH) {
+          sayac++;
+        }
+        delay(50);
+      }
+      durum = mars;
 
+      if (sayac % 2 == 1) {
+        analogWrite(motorSagPWM, x_ekseni);
+        analogWrite(motorSolPWM, y_ekseni);
+        Serial.println("Motorlara hiz verildi..");
+      } else {
+        analogWrite(motorSagPWM, 0);
+        analogWrite(motorSolPWM, 0);
+        Serial.println("Motorlar durduruldu..");
+      }
       alindi = false;
+    } else {
+      analogWrite(motorSagPWM, 0);
+      analogWrite(motorSolPWM, 0);
+      Serial.println("Motorlar durduruldu..");
     }
     delay(100);
+  } else {
+    analogWrite(motorSagPWM, 0);
+    analogWrite(motorSolPWM, 0);
+    Serial.println("Motorlar durduruldu..");
   }
 
 }
